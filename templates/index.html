@@ -1,0 +1,103 @@
+{% extends 'base_layout.html' %}
+{% block body %}
+
+<section id="title">
+    <div class="container-fluid page-header"
+        style="background-image: url('{{ url_for('static', filename='images/home-bg.jpg') }}');">
+        <header class="masthead">
+            <div class="header">
+                <h1 class="heading">Book your show</h1>
+                <span class="sub-heading"><strong>"The show must go on." - Freddie Mercury</strong></span>
+            </div>
+        </header>
+    </div>
+</section>
+
+<section id="search">
+    <form action="{{ url_for('search') }}" method='POST'>
+        <div class="form-floating" style="width: 40%; padding-bottom: 3px;">
+            <select type="text" class="form-select shadow" name="cat">
+                <option selected>Select</option>
+                <option value="venue">VENUE</option>
+                <option value="show">SHOW</option>
+            </select>
+            <label>CATEGORY</label>
+        </div>
+        <div class="form-floating d-flex shadow">
+            <textarea class="form-control me-2" id="floatingTextarea" placeholder="Search" name="q"></textarea>
+            <label for="floatingTextarea">SEARCH</label>
+            <button class="btn btn-dark" type="submit">Search</button>
+        </div>
+    </form>
+</section>
+
+
+{% if cat %}
+<section id="search_result">
+    <div class="result_head">
+        <h1 style="font-size: 1.8rem;">SEARCH RESULTS</h1>
+        <hr>
+    </div>
+    <div class="container xy">
+        {% if search_venues is not none %}
+        {% for venue in search_venues %}
+        <div class="card sr shadow">
+            <div class="left">
+                <p style="font-size: 1.3rem; margin-bottom: 0;">{{venue.venue_name}}</p>
+                <p class="card-title" style="font-size: 1rem;">{{venue.place}}</p>
+            </div>
+        </div>
+        {% endfor %}
+        {% else %}
+        <p>NO RESULT FOUND</p>
+        {% endif %}
+
+
+        {% if search_shows is not none %}
+        {% for show in search_shows %}
+        <div class="card sr">
+            <div class="left">
+                <p style="font-size: 1.8rem;">{{show.show_name}}</p>
+                <hr style="width: 95%">
+                <p class="card-title" style="font-size: 1.5rem;">{{show.venue.place}}</p>
+            </div>
+        </div>
+        {% endfor %}
+        {% else %}
+        <p>NO RESULT FOUND</p>
+        {% endif %}
+    </div>
+</section>
+{% endif %}
+
+<div class="container">
+    <hr>
+</div>
+
+<section id="show">
+    <div class="container">
+        <p style="font-size: 1.8rem;">SHOWS</p>
+        <div id="recent-shows" class="row">
+            {% for show in show_all %}
+            <div class="col-lg-4 col-md-6">
+                <div class="card shadow" style="width: 18rem;">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ show.show_name }}</h5>
+                        <p class="card-text">At {{ show.venue.venue_name }}</p>
+                        <p class="card-text">{{ show.date }}, {{ show.time }}</p>
+                        <div class="d-grid gap-2">
+                            {% if current_user.is_authenticated %}
+                            <a href="{{ url_for('book_ticket', show_id=show.show_id) }}"
+                                class="btn btn-primary btn-large">BOOK TICKETS</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+
+{% endblock %}
